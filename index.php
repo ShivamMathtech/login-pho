@@ -17,14 +17,27 @@
         // Build the query
 
         // Always filter the data which are comming from the userend
-        $email = mysqli_real_escape_string($conn, $_POST['Email']);
-        $password = mysqli_real_escape_string($conn, $_POST['Password']);
+        $email = mysqli_real_escape_string($conn, $_GET['Email']);
+        $password = mysqli_real_escape_string($conn, $_GET['Password']);
+        
+        $hash_password = hash('sha256',$password);
+  
         // Get the salt from the user table
        // $sql = "SELECT salt FROM user_tbl WHERE email = '$email'";
     //    $query = mysqli_query($conn, $sql) or die (mysqli_error($conn));
-        $sql = "SELECT * FROM  user_tbl WHERE email='$email' AND password='$password'";
+     
+        $sql = "SELECT * FROM  user_tbl WHERE username='$email' AND password='$hash_password'";
+        $result = mysqli_query($conn, $sql) or die(mysqli_error($conn));
+        $row = mysqli_fetch_array($result);
+    
         // Execute the query
-
+if(empty($row)){
+    echo "Invalid Email or Password";
+}else{
+    echo "Login successful";
+    header("location:welcome.php");
+    exit();
+}
         // DBCONNECTION CLOSE
         mysqli_close($conn);
        }
